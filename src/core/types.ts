@@ -122,6 +122,37 @@ export interface RiskScore {
   breakdown: ScoreBreakdownItem[];
 }
 
+export type ToolReadinessState =
+  | "ran_ok"
+  | "ran_error"
+  | "not_configured"
+  | "disabled_out_of_scope"
+  | "skipped_no_input"
+  | "skipped_dependency"
+  | "skipped_rate_limited"
+  | "skipped_by_policy"
+  | "missing";
+
+export interface ToolReadinessItem {
+  id: number;
+  expectedName: string;
+  adapterName?: string;
+  runStatus?: EnricherOutput["status"];
+  readiness: ToolReadinessState;
+  reason: string;
+  artifactIds: string[];
+}
+
+export interface ToolReadinessReport {
+  requiredCount: number;
+  implementedCount: number;
+  missingRequired: string[];
+  extraImplemented: string[];
+  coveragePass: boolean;
+  counts: Record<ToolReadinessState, number>;
+  items: ToolReadinessItem[];
+}
+
 export interface EntityNode {
   id: string;
   type: "Domain" | "URL" | "IP" | "ASN" | "Cert" | "Email" | "Username" | "ToolFinding";
@@ -250,6 +281,7 @@ export interface InvestigationResult {
   input: InvestigationInput;
   scope: ScopeState;
   enrichments: EnricherOutput[];
+  toolReadiness: ToolReadinessReport;
   graph: GraphOutput;
   score: RiskScore;
   keyLinkages: Array<{ text: string; evidenceIds: string[] }>;

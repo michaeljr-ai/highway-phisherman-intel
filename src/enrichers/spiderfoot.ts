@@ -32,9 +32,13 @@ export default createAdapter({
 
     const result = await context.utilities.runCommand(command, 60_000);
     const succeeded = result.code === 0 || (result.code === 1 && !result.stderr.trim());
+    const failureReason = `SpiderFoot command exited ${result.code}${
+      result.stderr.trim() ? `: ${result.stderr.trim().slice(0, 180)}` : ""
+    }`;
 
     return {
-      status: succeeded ? "ok" : "error",
+      status: succeeded ? "ok" : "skipped",
+      statusReason: succeeded ? undefined : failureReason,
       raw: {
         cmd: command,
         code: result.code,
@@ -42,7 +46,7 @@ export default createAdapter({
         stderr: result.stderr,
         modules
       },
-      summary: succeeded ? "SpiderFoot modules executed" : "SpiderFoot execution failed"
+      summary: succeeded ? "SpiderFoot modules executed" : failureReason
     };
   },
   parse(raw) {

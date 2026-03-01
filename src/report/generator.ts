@@ -21,12 +21,14 @@ import {
   GraphOutput,
   InvestigationInput,
   MethodsReference,
-  RiskScore
+  RiskScore,
+  ToolReadinessReport
 } from "../core/types.js";
 
 interface GeneratorInput {
   input: InvestigationInput;
   enrichments: EnricherOutput[];
+  toolReadiness: ToolReadinessReport;
   graph: GraphOutput;
   score: RiskScore;
   keyLinkages: Array<{ text: string; evidenceIds: string[] }>;
@@ -43,6 +45,50 @@ function summarySectionSlide(title: string, rows: Array<{ key: string; value: un
     <h2>${escapeHtml(title)}</h2>
     <div class="row">${tags.map((t) => tag(t)).join(" ")}</div>
     <div class="kv">${rows.map((row) => kvRow(row.key, row.value)).join("")}</div>
+  </section>`;
+}
+
+function readinessLabel(state: string): string {
+  const labels: Record<string, string> = {
+    ran_ok: "RAN OK",
+    ran_error: "RAN ERROR",
+    not_configured: "NOT CONFIGURED",
+    disabled_out_of_scope: "DISABLED (SCOPE)",
+    skipped_no_input: "SKIPPED (NO INPUT)",
+    skipped_dependency: "SKIPPED (DEPENDENCY)",
+    skipped_rate_limited: "SKIPPED (RATE LIMIT)",
+    skipped_by_policy: "SKIPPED (POLICY)",
+    missing: "MISSING"
+  };
+  return labels[state] ?? state.toUpperCase();
+}
+
+function toolHealthSlide(toolReadiness: ToolReadinessReport): string {
+  const rows = toolReadiness.items.map((item) => [
+    `${item.id}. ${item.expectedName}`,
+    readinessLabel(item.readiness),
+    item.runStatus ?? "-",
+    item.reason,
+    item.artifactIds.slice(0, 4).join(", ") || "-"
+  ]);
+
+  return `<section class="slide" data-title="Tool Health & Coverage">
+    <h2>Tool Health & Coverage</h2>
+    <div class="grid metrics">
+      ${metricBox("Required Tools", toolReadiness.requiredCount)}
+      ${metricBox("Implemented", toolReadiness.implementedCount)}
+      ${metricBox("Coverage", toolReadiness.coveragePass ? "PASS" : "FAIL")}
+      ${metricBox("Ran OK", toolReadiness.counts.ran_ok)}
+      ${metricBox("Ran Error", toolReadiness.counts.ran_error)}
+      ${metricBox("Not Configured", toolReadiness.counts.not_configured)}
+      ${metricBox("Disabled/Skipped", toolReadiness.counts.disabled_out_of_scope + toolReadiness.counts.skipped_no_input + toolReadiness.counts.skipped_dependency + toolReadiness.counts.skipped_rate_limited + toolReadiness.counts.skipped_by_policy)}
+    </div>
+    ${table(["Tool", "Readiness", "Run Status", "Reason", "Evidence IDs"], rows)}
+    ${
+      toolReadiness.extraImplemented.length > 0
+        ? `<h3>Additional Adapters</h3>${codeBlock(JSON.stringify(toolReadiness.extraImplemented, null, 2), "json")}`
+        : ""
+    }
   </section>`;
 }
 
@@ -391,6 +437,7 @@ export function generateReportHtml(input: GeneratorInput): string {
 
   slides.push(coverSlide(input.input, input.score));
   slides.push(executiveSummarySlide(input.score, input.keyLinkages));
+  slides.push(toolHealthSlide(input.toolReadiness));
   slides.push(plainEnglishIntelSlide(input.score, input.enrichments));
   slides.push(normalizationSlide(input.input));
   slides.push(scoreSlide(input.score));
@@ -447,7 +494,7 @@ export function generateReportHtml(input: GeneratorInput): string {
     .join("");
 
   return template
-    .replace(/__TITLE__/g, `Highway Phisherman Report - ${input.input.caseId}`)
+    .replace(/__TITLE__/g, `Intelligence Briefing - ${input.input.caseId}`)
     .replace("__NAV__", navButtons)
     .replace("__SLIDES__", slides.join("\n"));
 }

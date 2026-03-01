@@ -13,14 +13,26 @@ export default createAdapter({
     }
 
     const endpoint = `https://web.archive.org/cdx/search/cdx?url=${encodeURIComponent(domain)}/*&output=json&fl=timestamp,original,statuscode,mimetype&filter=statuscode:200&limit=200`;
-    const raw = await safeJsonFetch(context, endpoint);
+    try {
+      const raw = await safeJsonFetch(context, endpoint);
 
-    return {
-      status: "ok",
-      endpoint,
-      raw,
-      summary: "Wayback snapshots collected"
-    };
+      return {
+        status: "ok",
+        endpoint,
+        raw,
+        summary: "Wayback snapshots collected"
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Wayback fetch failed";
+      const isRateLimited = /\b429\b|too many requests|rate limit/i.test(message);
+      return {
+        status: "skipped",
+        statusReason: isRateLimited ? `Wayback rate limited: ${message}` : `Wayback unavailable: ${message}`,
+        endpoint,
+        raw: { error: message },
+        summary: isRateLimited ? `Wayback rate limited: ${message}` : `Wayback unavailable: ${message}`
+      };
+    }
   },
   parse(raw) {
     const rows = Array.isArray(raw) ? raw : [];

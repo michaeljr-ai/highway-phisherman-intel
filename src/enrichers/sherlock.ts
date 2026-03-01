@@ -22,16 +22,20 @@ export default createAdapter({
     const cmd = `sherlock ${usernames.slice(0, 3).join(" ")} --print-found --timeout 6`;
     const result = await context.utilities.runCommand(cmd, 35_000);
     const succeeded = result.code === 0 || (result.code === 1 && !result.stderr.trim());
+    const failureReason = `Sherlock command exited ${result.code}${
+      result.stderr.trim() ? `: ${result.stderr.trim().slice(0, 180)}` : ""
+    }`;
 
     return {
-      status: succeeded ? "ok" : "error",
+      status: succeeded ? "ok" : "skipped",
+      statusReason: succeeded ? undefined : failureReason,
       raw: {
         cmd,
         code: result.code,
         stdout: result.stdout,
         stderr: result.stderr
       },
-      summary: succeeded ? "Sherlock username scan completed" : "Sherlock execution failed"
+      summary: succeeded ? "Sherlock username scan completed" : failureReason
     };
   },
   parse(raw) {

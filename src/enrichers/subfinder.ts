@@ -22,16 +22,20 @@ export default createAdapter({
     const cmd = `subfinder -d ${domain} -silent`;
     const result = await context.utilities.runCommand(cmd, 45_000);
     const succeeded = result.code === 0 || (result.code === 1 && !result.stderr.trim());
+    const failureReason = `Subfinder command exited ${result.code}${
+      result.stderr.trim() ? `: ${result.stderr.trim().slice(0, 180)}` : ""
+    }`;
 
     return {
-      status: succeeded ? "ok" : "error",
+      status: succeeded ? "ok" : "skipped",
+      statusReason: succeeded ? undefined : failureReason,
       raw: {
         cmd,
         code: result.code,
         stdout: result.stdout,
         stderr: result.stderr
       },
-      summary: succeeded ? "Subfinder passive subdomain discovery complete" : "Subfinder failed"
+      summary: succeeded ? "Subfinder passive subdomain discovery complete" : failureReason
     };
   },
   parse(raw) {

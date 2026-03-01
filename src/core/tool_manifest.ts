@@ -1,6 +1,6 @@
 import { ALL_ENRICHERS } from "../enrichers/registry.js";
 
-type RequiredTool = {
+export type RequiredTool = {
   id: number;
   expectedName: string;
   aliases: string[];
@@ -113,6 +113,10 @@ export type ToolCoverageSnapshot = {
   implementedCount: number;
   missingRequired: string[];
 };
+
+export function getRequiredTools(): RequiredTool[] {
+  return REQUIRED_TOOLS.map((tool) => ({ ...tool, aliases: [...tool.aliases] }));
+}
 
 export function getToolCoverageSnapshot(): ToolCoverageSnapshot {
   const implemented = new Set(ALL_ENRICHERS.map((adapter) => adapter.tool_name));

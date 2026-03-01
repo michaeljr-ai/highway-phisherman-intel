@@ -9,6 +9,7 @@ import { fuseFindings } from "./fusion.js";
 import { deriveScopeFromFindings, extractIocsFromText } from "./ioc_extract.js";
 import { computeRiskScore } from "./scoring.js";
 import { fetchJson, fetchText, runCommand } from "./utils.js";
+import { buildToolReadinessReport } from "./tool_readiness.js";
 import { ENRICHERS_BY_WAVE, TOOL_COUNT } from "../enrichers/registry.js";
 import {
   AppConfig,
@@ -412,10 +413,12 @@ export async function runInvestigation(
 
   const { graph, keyLinkages } = fuseFindings(input, scope, enrichments);
   const score = computeRiskScore(enrichments);
+  const toolReadiness = buildToolReadinessReport(enrichments);
 
   const reportHtml = generateReportHtml({
     input,
     enrichments,
+    toolReadiness,
     graph,
     score,
     keyLinkages,
@@ -433,7 +436,8 @@ export async function runInvestigation(
     score,
     graph,
     input,
-    enrichments
+    enrichments,
+    toolReadiness
   });
 
   await artifactStore.close();
@@ -444,6 +448,7 @@ export async function runInvestigation(
     input,
     scope,
     enrichments,
+    toolReadiness,
     graph,
     score,
     keyLinkages,

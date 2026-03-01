@@ -26,12 +26,13 @@
       body {
         margin: 0;
         font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+        line-height: 1.55;
         background: radial-gradient(1200px 500px at 80% -20%, rgba(212, 168, 67, 0.12), transparent 60%), var(--bg);
         color: var(--text);
       }
       .app {
         display: grid;
-        grid-template-columns: 280px 1fr;
+        grid-template-columns: 320px 1fr;
         min-height: 100vh;
       }
       aside {
@@ -44,7 +45,7 @@
         overflow: auto;
       }
       .brand { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; color: var(--accent); }
-      .search { width: 100%; margin-top: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #090909; color: var(--text); }
+      .search { width: 100%; margin-top: 12px; padding: 11px; border: 1px solid var(--border); border-radius: 8px; background: #090909; color: var(--text); }
       .input-row { margin-top: 12px; display: grid; gap: 8px; }
       .input-row input {
         width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #090909; color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 12px;
@@ -66,25 +67,26 @@
         color: var(--muted);
         border: 1px solid transparent;
         border-radius: 6px;
-        padding: 8px;
+        padding: 9px;
         cursor: pointer;
-        font-size: 12px;
+        font-size: 13px;
       }
       nav button.active, nav button:hover { border-color: var(--border); color: var(--text); background: #131313; }
 
-      main { padding: 24px; overflow: auto; }
-      .slides { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
+      main { padding: 28px; overflow: auto; }
+      .slides { max-width: 1260px; margin: 0 auto; display: grid; gap: 20px; }
       .slide {
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 20px;
+        padding: 22px;
         background: linear-gradient(180deg, rgba(212, 168, 67, 0.04), transparent 120px), var(--panel);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       }
       h1, h2, h3 { margin: 0 0 12px 0; line-height: 1.2; }
-      h1 { font-size: 34px; }
-      h2 { font-size: 24px; }
-      h3 { font-size: 16px; color: var(--muted); }
+      h1 { font-size: 38px; }
+      h2 { font-size: 28px; }
+      h3 { font-size: 17px; color: var(--muted); }
+      p, li { font-size: 14px; }
 
       .grid.metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
       .metric { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
@@ -95,16 +97,20 @@
       .tag-critical { border-color: #d9534f; color: #ff8e8b; }
       .tag-active { border-color: #d4a843; color: #f0c96a; }
       .tag-confirmed { border-color: #4ebf7a; color: #82e8a8; }
-      .tag-info, .tag-ok, .tag-skipped, .tag-disabled, .tag-not_configured { border-color: #467ca8; color: #89bee9; }
+      .tag-info, .tag-ok, .tag-skipped, .tag-disabled, .tag-not_configured, .tag-ran_ok { border-color: #467ca8; color: #89bee9; }
+      .tag-ran_error, .tag-error, .tag-missing { border-color: #d9534f; color: #ff8e8b; }
+      .tag-skipped_dependency, .tag-skipped_rate_limited, .tag-skipped_by_policy, .tag-skipped_no_input, .tag-disabled_out_of_scope { border-color: #9b7a35; color: #f2cf79; }
 
       .kv { display: grid; gap: 8px; }
       .kv-row { display: grid; grid-template-columns: 210px 1fr; gap: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
       .kv-key { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
-      .kv-value { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; }
+      .kv-value { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; line-height: 1.45; }
 
       table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); }
       th, td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; font-size: 12px; vertical-align: top; }
       th { color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+      tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+      tbody tr:hover { background: rgba(212, 168, 67, 0.08); }
 
       .timeline { border-left: 2px solid var(--border); margin-left: 8px; padding-left: 14px; display: grid; gap: 12px; }
       .timeline-item { display: grid; grid-template-columns: 16px 1fr; gap: 8px; }
@@ -121,10 +127,11 @@
         overflow: auto;
         border: 1px solid var(--border);
         border-radius: 10px;
-        background: #090909;
+        background: #060606;
         color: #dfdfdf;
         padding: 14px;
         font-size: 12px;
+        line-height: 1.55;
         font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
       }
 
@@ -136,18 +143,19 @@
       @media print {
         aside { display: none; }
         .app { display: block; }
-        .slide { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px; }
+        .slide { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px; box-shadow: none; background: #fff; color: #111; border-color: #ddd; }
+        body { background: #fff; color: #111; }
       }
     </style>
   </head>
   <body>
     <div class="app">
       <aside>
-        <div class="brand">Highway Phisherman</div>
+        <div class="brand">Intelligence Briefing</div>
         <input id="slideSearch" class="search" placeholder="Search slides" />
         <div class="input-row">
           <input id="targetInput" placeholder="domain, URL, or email" />
-          <button id="generateBtn" class="btn">Run Investigation</button>
+          <button id="generateBtn" class="btn">Generate Briefing</button>
           <label class="toggle-row"><input id="activeReconToggle" type="checkbox" /> Run Active Recon</label>
         </div>
         <nav id="slideNav">__NAV__</nav>

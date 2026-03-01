@@ -20,34 +20,48 @@ export default createAdapter({
       return skippedRun("No URL in scope");
     }
 
-    const response = await fetch(url, {
-      method: "GET",
-      redirect: "follow",
-      signal: AbortSignal.timeout(12_000),
-      headers: {
-        "User-Agent": "highway-phisherman/1.0"
-      }
-    });
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+        signal: AbortSignal.timeout(12_000),
+        headers: {
+          "User-Agent": "highway-phisherman/1.0"
+        }
+      });
 
-    const body = await response.text();
-    const sample = body.slice(0, 2500);
-    const headers: Record<string, string> = {};
-    response.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
+      const body = await response.text();
+      const sample = body.slice(0, 2500);
+      const headers: Record<string, string> = {};
+      response.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
 
-    return {
-      status: "ok",
-      endpoint: url,
-      raw: {
-        url,
-        status: response.status,
-        finalUrl: response.url,
-        headers,
-        sample
-      },
-      summary: `Fetched ${url} with status ${response.status}`
-    };
+      return {
+        status: "ok",
+        endpoint: url,
+        raw: {
+          url,
+          status: response.status,
+          finalUrl: response.url,
+          headers,
+          sample
+        },
+        summary: `Fetched ${url} with status ${response.status}`
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "fetch failed";
+      return {
+        status: "skipped",
+        statusReason: `Live fetch unavailable: ${message}`,
+        endpoint: url,
+        raw: {
+          url,
+          error: message
+        },
+        summary: `Live fetch unavailable: ${message}`
+      };
+    }
   },
   parse(raw) {
     const sample = String((raw as any)?.sample ?? "");

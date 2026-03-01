@@ -37,9 +37,13 @@ export default createAdapter({
     const cmd = `nmap ${args} -oX - ${ips.slice(0, 10).join(" ")}`;
     const result = await context.utilities.runCommand(cmd, 60_000);
     const succeeded = result.code === 0 || /<nmaprun[\s>]/i.test(result.stdout);
+    const failureReason = `Nmap command exited ${result.code}${
+      result.stderr.trim() ? `: ${result.stderr.trim().slice(0, 180)}` : ""
+    }`;
 
     return {
-      status: succeeded ? "ok" : "error",
+      status: succeeded ? "ok" : "skipped",
+      statusReason: succeeded ? undefined : failureReason,
       toolVersion: "cli",
       raw: {
         cmd,
@@ -48,7 +52,7 @@ export default createAdapter({
         stderr: result.stderr,
         profile
       },
-      summary: succeeded ? "Nmap scan completed" : "Nmap scan failed"
+      summary: succeeded ? "Nmap scan completed" : failureReason
     };
   },
   parse(raw) {

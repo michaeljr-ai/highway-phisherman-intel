@@ -10,7 +10,7 @@ export function escapeHtml(value: unknown): string {
 }
 
 export function tag(label: string): string {
-  const cls = label.toLowerCase();
+  const cls = label.toLowerCase().replace(/[^a-z0-9_]+/g, "_");
   return `<span class="tag tag-${escapeHtml(cls)}">${escapeHtml(label)}</span>`;
 }
 
@@ -54,8 +54,13 @@ export function timeline(events: Array<{ title: string; subtitle?: string; time?
 }
 
 export function coverSlide(input: InvestigationInput, score: RiskScore): string {
+  const targetSummary = input.normalizedInputs
+    .map((item) => item.normalizedValue)
+    .slice(0, 3)
+    .join(" | ");
   return `<section class="slide" data-title="Cover">
-    <h1>Highway Phisherman Report</h1>
+    <h1>Intelligence Briefing</h1>
+    <p class="muted">Target: ${escapeHtml(targetSummary || "n/a")}</p>
     <div class="row">${tag(score.severity)} ${tag("ACTIVE")} ${tag("CONFIRMED")} ${tag("INFO")}</div>
     <div class="grid metrics">
       ${metricBox("Case ID", input.caseId)}

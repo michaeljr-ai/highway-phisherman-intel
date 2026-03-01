@@ -23,9 +23,13 @@ export default createAdapter({
     const cmd = `wafw00f ${target} -a`;
     const result = await context.utilities.runCommand(cmd, 30_000);
     const succeeded = result.code === 0 || (result.code === 1 && !result.stderr.trim());
+    const failureReason = `wafw00f command exited ${result.code}${
+      result.stderr.trim() ? `: ${result.stderr.trim().slice(0, 180)}` : ""
+    }`;
 
     return {
-      status: succeeded ? "ok" : "error",
+      status: succeeded ? "ok" : "skipped",
+      statusReason: succeeded ? undefined : failureReason,
       toolVersion: "cli",
       raw: {
         cmd,
@@ -33,7 +37,7 @@ export default createAdapter({
         stdout: result.stdout,
         stderr: result.stderr
       },
-      summary: succeeded ? "WAF fingerprinting complete" : "WAF fingerprinting failed"
+      summary: succeeded ? "WAF fingerprinting complete" : failureReason
     };
   },
   parse(raw) {
