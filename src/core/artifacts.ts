@@ -33,6 +33,7 @@ export class ArtifactStore {
   private readonly caseId: string;
   private readonly outputDir: string;
   private readonly artifactsDir: string;
+  private readonly runTag: string;
   private readonly config: AppConfig;
   private readonly items: EvidenceArtifact[] = [];
   private dbClient?: Client;
@@ -42,6 +43,7 @@ export class ArtifactStore {
     this.caseId = caseId;
     this.outputDir = outputDir;
     this.artifactsDir = path.join(outputDir, "artifacts");
+    this.runTag = crypto.randomUUID().slice(0, 8);
     this.config = config;
   }
 
@@ -124,7 +126,9 @@ export class ArtifactStore {
   }): Promise<EvidenceArtifact> {
     const buffer = toBuffer(params.payload);
     const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
-    const artifactId = `${this.caseId}-${params.toolName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${this.items.length + 1}`;
+    const artifactId = `${this.caseId}-${this.runTag}-${params.toolName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")}-${this.items.length + 1}`;
     const ext = params.extension ?? inferExtension(params.artifactType, params.payload);
     const filePath = path.join(this.artifactsDir, `${artifactId}.${ext}`);
 
