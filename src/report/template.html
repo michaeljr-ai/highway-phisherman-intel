@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>__TITLE__</title>
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        src: local('Inter'), local('Inter Regular');
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: local('JetBrains Mono'), local('JetBrainsMono-Regular');
+      }
+      :root {
+        --bg: #0a0a0a;
+        --panel: #111111;
+        --panel-2: #171717;
+        --text: #f3f3f3;
+        --muted: #b6b6b6;
+        --accent: #d4a843;
+        --border: #262626;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+        background: radial-gradient(1200px 500px at 80% -20%, rgba(212, 168, 67, 0.12), transparent 60%), var(--bg);
+        color: var(--text);
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+      }
+      aside {
+        border-right: 1px solid var(--border);
+        background: linear-gradient(180deg, #0f0f0f, #0a0a0a);
+        padding: 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+      }
+      .brand { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; color: var(--accent); }
+      .search { width: 100%; margin-top: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #090909; color: var(--text); }
+      .input-row { margin-top: 12px; display: grid; gap: 8px; }
+      .input-row input {
+        width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #090909; color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 12px;
+      }
+      .btn {
+        border: 1px solid #7f6627;
+        background: linear-gradient(180deg, #d4a843, #9c7420);
+        color: #111;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .toggle-row { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+      nav { margin-top: 14px; display: grid; gap: 6px; }
+      nav button {
+        text-align: left;
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      nav button.active, nav button:hover { border-color: var(--border); color: var(--text); background: #131313; }
+
+      main { padding: 24px; overflow: auto; }
+      .slides { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
+      .slide {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        background: linear-gradient(180deg, rgba(212, 168, 67, 0.04), transparent 120px), var(--panel);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      h1, h2, h3 { margin: 0 0 12px 0; line-height: 1.2; }
+      h1 { font-size: 34px; }
+      h2 { font-size: 24px; }
+      h3 { font-size: 16px; color: var(--muted); }
+
+      .grid.metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+      .metric { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+      .metric-label { color: var(--muted); font-size: 12px; }
+      .metric-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+      .tag { display: inline-block; border: 1px solid var(--border); border-radius: 14px; padding: 4px 8px; font-size: 11px; margin-right: 6px; }
+      .tag-critical { border-color: #d9534f; color: #ff8e8b; }
+      .tag-active { border-color: #d4a843; color: #f0c96a; }
+      .tag-confirmed { border-color: #4ebf7a; color: #82e8a8; }
+      .tag-info, .tag-ok, .tag-skipped, .tag-disabled, .tag-not_configured { border-color: #467ca8; color: #89bee9; }
+
+      .kv { display: grid; gap: 8px; }
+      .kv-row { display: grid; grid-template-columns: 210px 1fr; gap: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
+      .kv-key { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+      .kv-value { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; }
+
+      table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); }
+      th, td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; font-size: 12px; vertical-align: top; }
+      th { color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+
+      .timeline { border-left: 2px solid var(--border); margin-left: 8px; padding-left: 14px; display: grid; gap: 12px; }
+      .timeline-item { display: grid; grid-template-columns: 16px 1fr; gap: 8px; }
+      .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin-top: 5px; }
+      .timeline-title { font-weight: 600; }
+      .timeline-subtitle, .timeline-time, .muted { color: var(--muted); font-size: 12px; }
+
+      .code-wrap { position: relative; }
+      .copy-btn {
+        position: absolute; right: 8px; top: 8px; background: #1f1f1f; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px;
+      }
+      pre {
+        margin: 0;
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #090909;
+        color: #dfdfdf;
+        padding: 14px;
+        font-size: 12px;
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      @media (max-width: 1024px) {
+        .app { grid-template-columns: 1fr; }
+        aside { position: static; height: auto; }
+      }
+
+      @media print {
+        aside { display: none; }
+        .app { display: block; }
+        .slide { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside>
+        <div class="brand">Highway Phisherman</div>
+        <input id="slideSearch" class="search" placeholder="Search slides" />
+        <div class="input-row">
+          <input id="targetInput" placeholder="domain, URL, or email" />
+          <button id="generateBtn" class="btn">Run Investigation</button>
+          <label class="toggle-row"><input id="activeReconToggle" type="checkbox" /> Run Active Recon</label>
+        </div>
+        <nav id="slideNav">__NAV__</nav>
+      </aside>
+      <main>
+        <div class="slides" id="slidesContainer">__SLIDES__</div>
+      </main>
+    </div>
+
+    <script>
+      (() => {
+        const nav = document.getElementById('slideNav');
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const search = document.getElementById('slideSearch');
+
+        function setActive(index) {
+          nav.querySelectorAll('button').forEach((btn, i) => btn.classList.toggle('active', i === index));
+        }
+
+        nav.addEventListener('click', (event) => {
+          const btn = event.target.closest('button[data-index]');
+          if (!btn) return;
+          const idx = Number(btn.dataset.index || '0');
+          const target = slides[idx];
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setActive(idx);
+          }
+        });
+
+        search.addEventListener('input', () => {
+          const q = (search.value || '').toLowerCase();
+          nav.querySelectorAll('button[data-index]').forEach((btn) => {
+            const text = btn.textContent.toLowerCase();
+            btn.style.display = !q || text.includes(q) ? 'block' : 'none';
+          });
+        });
+
+        document.querySelectorAll('[data-copy]').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const pre = btn.parentElement.querySelector('pre code');
+            if (!pre) return;
+            await navigator.clipboard.writeText(pre.textContent || '');
+            const old = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => (btn.textContent = old), 1200);
+          });
+        });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const idx = slides.indexOf(entry.target);
+                if (idx >= 0) setActive(idx);
+              }
+            });
+          },
+          { threshold: 0.5 }
+        );
+        slides.forEach((s) => observer.observe(s));
+
+        const generateBtn = document.getElementById('generateBtn');
+        const targetInput = document.getElementById('targetInput');
+        generateBtn.addEventListener('click', () => {
+          const target = (targetInput.value || '').trim();
+          if (!target) return;
+          const url = new URL(window.location.href);
+          url.searchParams.set('target', target);
+          url.searchParams.set('activeRecon', document.getElementById('activeReconToggle').checked ? '1' : '0');
+          window.location.href = url.toString();
+        });
+      })();
+    </script>
+  </body>
+</html>

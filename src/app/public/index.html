@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Highway Phisherman</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-orb ambient-orb-a"></div>
+    <div class="ambient-orb ambient-orb-b"></div>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-block panel">
+          <div class="brand-kicker">Investigation Console</div>
+          <div class="brand-title">Highway Phisherman</div>
+          <p class="muted">Strict input scope: one target as domain, URL, or email.</p>
+        </div>
+
+        <form id="jobForm" class="panel">
+          <div class="section-title">Run Investigation</div>
+          <label for="target">Target Input</label>
+          <input id="target" name="target" placeholder="example.com or https://example.com/login or user@example.com" required />
+
+          <label for="tlp">TLP / Scan Policy</label>
+          <select id="tlp" name="tlp">
+            <option selected>TLP:RED</option>
+          </select>
+
+          <label class="toggle"><input id="activeRecon" type="checkbox" checked /> Active Recon (forced by TLP:RED)</label>
+          <button type="submit">Run Investigation</button>
+        </form>
+
+        <div class="panel">
+          <div class="section-title">Recent Jobs</div>
+          <div id="jobs" class="jobs"></div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="summary panel" id="summary">
+          <h1>Highway Phisherman</h1>
+          <p class="muted">Generate a chain-of-custody report with evidence hashes, risk scoring, correlation graph, and export bundle.</p>
+          <div id="summaryBody">No job selected.</div>
+        </section>
+
+        <section class="viewer panel">
+          <div class="viewer-header">
+            <div>
+              <span class="tag">CRITICAL</span>
+              <span class="tag">ACTIVE</span>
+              <span class="tag">CONFIRMED</span>
+              <span class="tag">INFO</span>
+            </div>
+            <div class="actions" id="actions"></div>
+          </div>
+          <iframe id="reportFrame" title="Generated Report"></iframe>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

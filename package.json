@@ -1,0 +1,46 @@
+{
+  "name": "highway-phisherman",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Domain + URL + Email intelligence investigation platform",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "tsx src/app/server.ts",
+    "cli": "tsx src/index.ts",
+    "tunnel": "ngrok http 4010",
+    "tunnel:80": "ngrok http 80",
+    "tunnel:url": "bash scripts/ngrok-url.sh",
+    "always-on:install": "bash scripts/install-always-on.sh",
+    "always-on:status": "bash scripts/status-always-on.sh",
+    "always-on:uninstall": "bash scripts/uninstall-always-on.sh",
+    "polyglot:up": "bash scripts/polyglot-up.sh",
+    "polyglot:down": "bash scripts/polyglot-down.sh",
+    "deploy:vercel:supabase": "bash scripts/deploy-vercel-supabase.sh",
+    "polyglot:always-on:install": "bash scripts/install-polyglot-always-on.sh",
+    "polyglot:always-on:status": "bash scripts/status-polyglot-always-on.sh",
+    "polyglot:always-on:uninstall": "bash scripts/uninstall-polyglot-always-on.sh",
+    "mock": "tsx src/index.ts --input example.com --input https://example.com/login?x=1 --input user@example.com --output ./output/briefings/mock_case --active=false",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.65.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.206.0",
+    "@opentelemetry/sdk-node": "^0.206.0",
+    "express": "^4.21.2",
+    "kafkajs": "^2.2.4",
+    "neo4j-driver": "^5.28.1",
+    "pg": "^8.13.1",
+    "psl": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.16.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,15 @@
+.env
+.env.vercel
+target/
+postman/node_modules/
+postman/reports/
+caido/node_modules/
+caido/dist/
+caido/cyberdeck-plugin/node_modules/
+caido/cyberdeck-plugin/dist/
+caido/logs/
+.vercel
+node_modules/
+output/
+tmp/
+dist/
